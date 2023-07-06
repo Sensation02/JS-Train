@@ -48,9 +48,7 @@ Book.read()
  *  | genre       | "Новела" |
  */
 // Створюємо об'єкт Novel, наслідуємо властивості і функції від об'єкта Book
-const Novel = Object.create(Book, {
-  genre: { value: '' },
-})
+const Novel = Object.create(Book)
 
 // Додаємо властивість genre
 Novel.genre = 'Новела'
@@ -104,53 +102,36 @@ console.log(Novel.isPrototypeOf(Biography))
 const ScienceBook = Object.create(Book)
 
 // Додаємо властивість 'info' за допомогою Object.defineProperty
-// Зробимо щоб 'info' не можно було видалити або змінити, перевіримо і спробуємо присвоїти ій будь яке значення (це потрібно робити ззовні defineProperty),
+// Зробимо щоб 'info' не можна було видалити або змінити, перевіримо і спробуємо присвоїти ій будь яке значення (це потрібно робити ззовні defineProperty),
 // Отримаємо помилку Cannot assign to read only property 'info' of object '#<Object>'
+// Object.defineProperty(ScienceBook, 'info', {
+//   writable: false,
+//   configurable: false,
+//   enumerable: false,
+// })
+// ScienceBook.info = 'Інформація про книгу'
 Object.defineProperty(ScienceBook, 'info', {
-  writable: false,
-  configurable: false,
+  writable: true,
+  configurable: true,
+  enumerable: true,
 })
-try {
-  ScienceBook.info = 'Інформація про книгу'
-  throw new Error(
-    "Cannot assign to read only property 'info' of object `${ScienceBook}}`",
-  )
-} catch (e) {
-  console.log(e)
-} finally {
-  console.log(ScienceBook.info)
-}
+ScienceBook.info = 'Інформація про книгу'
 
 // Далі створюємо сетер який присвоє властивості info значення яке отримує при виклику, помилку більше не отримуємо але при спробі вивести значення info отримуємо undefined
-try {
-  Object.defineProperty(ScienceBook, 'info', {
-    set(value) {
-      this._info = value
-    },
-  })
-  throw new Error('Не вдалося присвоїти значення')
-} catch (e) {
-  console.log(e)
-} finally {
-  console.log(ScienceBook.info)
-}
+Object.defineProperty(ScienceBook, 'info', {
+  set(value) {
+    this._info = value
+  },
+})
 
 // Створимо гетер який буде нам повертати рядок: Про книгу <title>: <info>
-try {
-  Object.defineProperty(ScienceBook, 'info', {
-    get() {
-      return `Про книгу ${this.title}: ${value}`
-    },
-  })
-  throw new Error('Не вдалося присвоїти значення')
-} catch (e) {
-  console.log(e)
-} finally {
-  console.log(ScienceBook.info)
-}
+Object.defineProperty(ScienceBook, 'info', {
+  get() {
+    return `Про книгу ${this.title}: ${this._info}`
+  },
+})
+
 // тепер все виводить коректно
-console.log(ScienceBook.info)
-// а ніфіга не коректно, виводить undefined
 
 // Заповнюємо об'єкт
 // | Властивість | Значення             |
